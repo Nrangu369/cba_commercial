@@ -1,0 +1,54 @@
+
+Vijay O <ovijay.01995@gmail.com>
+Mon, 28 Feb, 22:52 (13 hours ago)
+to Devopsranga888
+
+Cluster Setup:
+==============
+Apply below command in Master and Worker Node:                              
+----------------------------------------------
+sudo apt-get update
+sudo apt-get install docker.io
+docker --version
+sudo systemctl enable docker
+sudo systemctl status docker
+sudo systemctl start docker
+-----------------------------------------------
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
+sudo apt-get install curl
+sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+sudo apt-get install kubeadm kubelet kubectl
+sudo apt-mark hold kubeadm kubelet kubectl
+kubeadm version
+sudo swapoff -a
+          hostnamectl set-hostname master-node
+                                              sudo hostnamectl set-hostname worker01 / worker02
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------
+-----only on Master node---
+----------------------------
+
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16 
+                      
+mv  $HOME/.kube $HOME/.kube.bak
+mkdir -p $HOME/.kube
+
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+kubeadm token create  --print-join-command
+
+For Eg:
+kubeadm join --discovery-token abcdef.1234567890abcdef --discovery-token-ca-cert-hash sha256:1234..cdef 1.2.3.4:6443
+Kubectl get nodes
+
+sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+sudo kubectl get pods -n kube-system
+sudo kubectl get pods --all-namespaces
+
+# export kubever=$(kubectl version | base64 | tr -d '\n')
+# sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+# kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$kubever"
